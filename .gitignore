@@ -1,0 +1,13 @@
+!/.mvn/wrapper/maven-wrapper.jar
+
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.logs
+*.iws
+*.iml
+*.ipr
+.idea/
+
