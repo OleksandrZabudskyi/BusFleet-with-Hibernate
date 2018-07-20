@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.MySQL5Dialect;
+import ua.training.model.entity.*;
 import ua.training.util.PropertyLoader;
 
 import java.util.Properties;
@@ -21,6 +22,12 @@ public class HibernateConfig {
                 if (sessionFactory == null) {
                     Properties properties = PropertyLoader.load(DB_CONFIG);
                     Configuration config = new Configuration()
+                            .addAnnotatedClass(Admin.class)
+                            .addAnnotatedClass(Bus.class)
+                            .addAnnotatedClass(ua.training.model.entity.Driver.class)
+                            .addAnnotatedClass(Employee.class)
+                            .addAnnotatedClass(Route.class)
+                            .addAnnotatedClass(Trip.class)
                             .setProperty(Environment.DRIVER, Driver.class.getCanonicalName())
                             .setProperty(Environment.DIALECT, MySQL5Dialect.class.getCanonicalName())
                             .setProperty(Environment.URL, properties.getProperty(DB_URL))

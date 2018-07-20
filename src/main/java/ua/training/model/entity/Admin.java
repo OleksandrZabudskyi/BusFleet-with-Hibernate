@@ -1,5 +1,10 @@
 package ua.training.model.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "user")
 public class Admin extends Employee {
     private String passportNumber;
     private String passportRegistration;

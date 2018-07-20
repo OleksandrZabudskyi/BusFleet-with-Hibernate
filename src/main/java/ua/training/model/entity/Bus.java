@@ -1,15 +1,27 @@
 package ua.training.model.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Bus {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "busId")
     private int id;
+    @Column(name = "busModel")
     private String model;
     private String licensePlate;
     private int manufactureYear;
     private String parkingSpot;
     private boolean used;
+    @ManyToMany
+    @JoinTable(
+            name = "bus_has_driver",
+            joinColumns = { @JoinColumn(name = "bus_busId") },
+            inverseJoinColumns = { @JoinColumn(name = "user_userId") }
+    )
     private List<Driver> drivers = new ArrayList<>();
 
     public int getId() {

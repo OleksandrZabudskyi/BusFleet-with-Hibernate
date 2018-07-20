@@ -1,16 +1,27 @@
 package ua.training.model.entity;
 
+import javax.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "user")
 public abstract class Employee {
     public enum ROLE {
         ADMIN, DRIVER, GUEST
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userId")
     private int id;
     private String firstName;
     private String lastName;
     private String phoneNumber;
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", length = 31, insertable = false, updatable = false, columnDefinition = "ENUM('ADMIN', 'DRIVER')")
     private ROLE role;
 
     public int getId() {

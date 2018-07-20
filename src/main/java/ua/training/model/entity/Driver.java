@@ -1,13 +1,17 @@
 package ua.training.model.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "user")
 public class Driver extends Employee {
     private String drivingLicenceNumber;
     private int drivingExperience;
     private boolean assigned;
     private boolean registered;
+    @ManyToMany(mappedBy = "drivers")
     private List<Bus> buses = new ArrayList<>();
 
     public String getDrivingLicenceNumber() {
