@@ -66,12 +66,16 @@ public class TripDaoImpl implements TripDao {
     }
 
     @Override
-    public void create(Trip entity) throws EntityAlreadyExistException {
+    public void create(Trip entity) {
         try (PreparedStatement statement = connection.prepareStatement(SQLQueries.INSERT_TRIP)) {
             tripMapper.setParameters(entity, statement);
             statement.executeUpdate();
         } catch (SQLIntegrityConstraintViolationException e) {
-            throw new EntityAlreadyExistException(Messages.ENTITY_ALREADY_EXIST, e, entity.getNumber());
+            try {
+                throw new EntityAlreadyExistException(Messages.ENTITY_ALREADY_EXIST, e, entity.getNumber());
+            } catch (EntityAlreadyExistException e1) {
+                e1.printStackTrace();
+            }
         } catch (SQLException e) {
             logger.error(LogMessages.CREATE_ENTITY_ERROR, e);
             throw new RuntimeException(e);

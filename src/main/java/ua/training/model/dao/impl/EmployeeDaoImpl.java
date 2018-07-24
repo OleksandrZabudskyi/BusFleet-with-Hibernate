@@ -74,12 +74,16 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public void create(Employee entity) throws EntityAlreadyExistException {
+    public void create(Employee entity) {
         try (PreparedStatement statement = connection.prepareStatement(SQLQueries.INSERT_USER)) {
             employeeHandler.setParameters(entity, statement);
             statement.executeUpdate();
         } catch (SQLIntegrityConstraintViolationException e) {
-            throw new EntityAlreadyExistException(Messages.USER_ALREADY_EXIST, e, entity.getEmail());
+            try {
+                throw new EntityAlreadyExistException(Messages.USER_ALREADY_EXIST, e, entity.getEmail());
+            } catch (EntityAlreadyExistException e1) {
+                e1.printStackTrace();
+            }
         } catch (SQLException e) {
             logger.error(LogMessages.CREATE_ENTITY_ERROR, e);
             throw new RuntimeException(e);

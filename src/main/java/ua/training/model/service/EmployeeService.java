@@ -28,7 +28,7 @@ public interface EmployeeService {
      * @param driver driver
      * @throws ServiceException exception
      */
-    void registerDriver(Driver driver) throws ServiceException;
+    void registerDriver(Driver driver);
 
     /**
      *  Get all drivers

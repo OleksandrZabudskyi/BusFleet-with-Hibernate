@@ -16,13 +16,15 @@ public class Bus {
     private int manufactureYear;
     private String parkingSpot;
     private boolean used;
+    @OneToMany(mappedBy = "bus")
+    private List<Trip> trips;
     @ManyToMany
     @JoinTable(
             name = "bus_has_driver",
             joinColumns = { @JoinColumn(name = "bus_busId") },
             inverseJoinColumns = { @JoinColumn(name = "user_userId") }
     )
-    private List<Driver> drivers = new ArrayList<>();
+    private List<Driver> drivers;
 
     public int getId() {
         return id;
@@ -78,6 +80,14 @@ public class Bus {
 
     public void setDrivers(List<Driver> drivers) {
         this.drivers = drivers;
+    }
+
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
     }
 
     @Override

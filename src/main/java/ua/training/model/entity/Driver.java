@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@DiscriminatorValue(value = "DRIVER")
 public class Driver extends Employee {
     private String drivingLicenceNumber;
     private int drivingExperience;
     private boolean assigned;
     private boolean registered;
     @ManyToMany(mappedBy = "drivers")
-    private List<Bus> buses = new ArrayList<>();
+    private List<Bus> buses;
 
     public String getDrivingLicenceNumber() {
         return drivingLicenceNumber;

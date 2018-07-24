@@ -63,12 +63,16 @@ public class BusDaoImpl implements BusDao {
     }
 
     @Override
-    public void create(Bus entity) throws EntityAlreadyExistException {
+    public void create(Bus entity){
         try (PreparedStatement statement = connection.prepareStatement(SQLQueries.INSERT_BUS)) {
             busMapper.setParameters(entity, statement);
             statement.executeUpdate();
         } catch (SQLIntegrityConstraintViolationException e) {
-            throw new EntityAlreadyExistException(Messages.ENTITY_ALREADY_EXIST, e, String.valueOf(entity.getId()));
+            try {
+                throw new EntityAlreadyExistException(Messages.ENTITY_ALREADY_EXIST, e, String.valueOf(entity.getId()));
+            } catch (EntityAlreadyExistException e1) {
+                e1.printStackTrace();
+            }
         } catch (SQLException e) {
             logger.error(LogMessages.CREATE_ENTITY_ERROR, e);
             throw new RuntimeException(e);

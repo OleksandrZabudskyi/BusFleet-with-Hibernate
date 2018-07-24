@@ -1,5 +1,6 @@
 package ua.training.model.dao;
 
+import org.hibernate.Session;
 import ua.training.model.dao.impl.JDBCDaoFactory;
 
 import java.sql.Connection;
@@ -9,11 +10,15 @@ public abstract class DaoFactory {
 
     public abstract EmployeeDao createUserDao(Connection connection);
 
+    public abstract EmployeeDao createUserDao(Session session);
+
     public abstract RouteDao createRouteDao(Connection connection);
 
     public abstract TripDao createTripDao(Connection connection);
 
     public abstract BusDao createBusDao(Connection connection);
+
+    public abstract BusDao createBusDao(Session session);
 
     public static DaoFactory getInstance() {
         if (daoFactory == null) {

@@ -20,8 +20,7 @@ public abstract class Employee {
     private String phoneNumber;
     private String email;
     private String password;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", length = 31, insertable = false, updatable = false, columnDefinition = "ENUM('ADMIN', 'DRIVER')")
+    @Column(insertable = false, updatable = false)
     private ROLE role;
 
     public int getId() {

@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.MySQL5Dialect;
+import ua.training.model.dao.RoleConverter;
 import ua.training.model.entity.*;
 import ua.training.util.PropertyLoader;
 
@@ -35,6 +36,7 @@ public class HibernateConfig {
                             .setProperty(Environment.PASS, properties.getProperty(DB_PASSWORD))
                             .setProperty(Environment.HBM2DDL_AUTO, "validate")
                             .setProperty(Environment.SHOW_SQL, "true");
+                    config.addAttributeConverter(RoleConverter.class);
                     sessionFactory = config.buildSessionFactory();
                 }
             }

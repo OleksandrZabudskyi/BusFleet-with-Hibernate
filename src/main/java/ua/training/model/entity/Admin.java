@@ -1,10 +1,12 @@
 package ua.training.model.entity;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user")
+@DiscriminatorValue(value = "ADMIN")
 public class Admin extends Employee {
     private String passportNumber;
     private String passportRegistration;

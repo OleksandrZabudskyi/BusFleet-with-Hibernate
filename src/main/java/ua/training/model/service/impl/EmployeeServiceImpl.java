@@ -1,9 +1,12 @@
 package ua.training.model.service.impl;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import ua.training.exeptions.EntityAlreadyExistException;
 import ua.training.exeptions.ServiceException;
 import ua.training.model.dao.BusDao;
 import ua.training.model.dao.impl.ConnectionPoolHolder;
+import ua.training.model.dao.impl.HibernateConfig;
 import ua.training.model.entity.Driver;
 import ua.training.model.entity.Employee;
 import ua.training.model.dao.DaoFactory;
@@ -20,37 +23,30 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Optional<Employee> findEmployeeByEmail(String email) {
-        Connection connection = ConnectionPoolHolder.getConnection();
-        try (EmployeeDao employeeDao = DaoFactory.getInstance().createUserDao(connection)) {
+        try (Session session = HibernateConfig.getSession();
+             EmployeeDao employeeDao = DaoFactory.getInstance().createUserDao(session)) {
             return employeeDao.findByEmail(email);
         }
     }
 
     @Override
-    public void registerDriver(Driver driver) throws ServiceException {
-        Connection connection = ConnectionPoolHolder.getConnection();
-        try (EmployeeDao employeeDao = DaoFactory.getInstance().createUserDao(connection);
-             BusDao busDao = DaoFactory.getInstance().createBusDao(connection)) {
-            connection.setAutoCommit(false);
+    public void registerDriver(Driver driver) {
+        try (Session session = HibernateConfig.getSession();
+             EmployeeDao employeeDao = DaoFactory.getInstance().createUserDao(session);
+             BusDao busDao = DaoFactory.getInstance().createBusDao(session)) {
+            Transaction transaction = session.beginTransaction();
             driver.setRole(Employee.ROLE.DRIVER);
             employeeDao.create(driver);
             Optional<Employee> savedDriver = employeeDao.findByEmail(driver.getEmail());
             savedDriver.ifPresent(employee -> busDao.addBusesHasDriverRelation(busDao.findAll(), employee.getId()));
-            connection.commit();
-        } catch (SQLException | EntityAlreadyExistException e) {
-            try {
-                connection.rollback();
-                throw new ServiceException(e);
-            } catch (SQLException e1) {
-                throw new ServiceException(e);
-            }
+            transaction.commit();
         }
     }
 
     @Override
     public List<Driver> getAllDrivers() {
-        Connection connection = ConnectionPoolHolder.getConnection();
-        try (EmployeeDao employeeDao = DaoFactory.getInstance().createUserDao(connection)) {
+        try (Session session = HibernateConfig.getSession();
+             EmployeeDao employeeDao = DaoFactory.getInstance().createUserDao(session)) {
             List<Employee> employees = employeeDao.findAll();
             return employees.stream()
                     .filter(employee -> employee instanceof Driver)

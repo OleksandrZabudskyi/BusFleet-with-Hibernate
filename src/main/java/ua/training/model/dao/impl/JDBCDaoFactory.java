@@ -1,5 +1,6 @@
 package ua.training.model.dao.impl;
 
+import org.hibernate.Session;
 import ua.training.model.dao.*;
 import ua.training.model.dao.mapper.BusMapper;
 import ua.training.model.dao.mapper.DriverMapper;
@@ -13,6 +14,11 @@ public class JDBCDaoFactory extends DaoFactory {
     @Override
     public EmployeeDao createUserDao(Connection connection) {
         return new EmployeeDaoImpl(connection, new EmployeeHandler());
+    }
+
+    @Override
+    public EmployeeDao createUserDao(Session session) {
+        return new EmployeeDaoImplH(session);
     }
 
     @Override
@@ -39,5 +45,10 @@ public class JDBCDaoFactory extends DaoFactory {
                 .setDriverMapper(new DriverMapper())
                 .setRouteMapper(new RouteMapper())
                 .createBusDaoImpl();
+    }
+
+    @Override
+    public BusDao createBusDao(Session session) {
+        return new BusDaoImplH(session);
     }
 }
