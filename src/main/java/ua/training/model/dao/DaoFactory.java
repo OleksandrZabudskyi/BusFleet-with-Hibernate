@@ -14,7 +14,11 @@ public abstract class DaoFactory {
 
     public abstract RouteDao createRouteDao(Connection connection);
 
+    public abstract RouteDao createRouteDao(Session session);
+
     public abstract TripDao createTripDao(Connection connection);
+
+    public abstract TripDao createTripDao(Session session);
 
     public abstract BusDao createBusDao(Connection connection);
 

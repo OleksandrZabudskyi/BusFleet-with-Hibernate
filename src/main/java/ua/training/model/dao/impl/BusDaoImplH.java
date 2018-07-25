@@ -22,24 +22,12 @@ public class BusDaoImplH implements BusDao {
 
     @Override
     public List<Bus> findAllBusesWithDrivers() {
-        Query<Bus> tripQuery = session.createQuery("from Bus bus join fetch bus.drivers", Bus.class);
-        return tripQuery.getResultList();
+        Query<Bus> query = session.createQuery("FROM Bus bus JOIN FETCH bus.drivers", Bus.class);
+        return query.getResultList();
     }
 
     @Override
     public Map<Bus, Route> findAllBusesWithRoutes() {
-/*        Query<Bus> tripQuery = session.createQuery("from Bus", Bus.class);
-        List<Bus> buses = tripQuery.getResultList();
-        Map<Bus, Route> map = new HashMap<>();
-        for (Bus bus: buses) {
-            if(bus.getTrips().isEmpty()) {
-                map.put(bus, new Route());
-            } else {
-                for (Trip trip : bus.getTrips()) {
-                    map.put(bus, trip.getRoute());
-                }
-            }
-        }*/
         return new HashMap<>();
     }
 
@@ -50,13 +38,15 @@ public class BusDaoImplH implements BusDao {
 
     @Override
     public Optional<Bus> findById(Integer integer) {
-        return null;
+        Query<Bus> query = session.createQuery("FROM Bus WHERE id = :id", Bus.class);
+        query.setParameter("id", integer);
+        return Optional.of(query.getSingleResult());
     }
 
     @Override
     public List<Bus> findAll() {
-        Query<Bus> tripQuery = session.createQuery("from Bus", Bus.class);
-        return tripQuery.getResultList();
+        Query<Bus> query = session.createQuery("FROM Bus", Bus.class);
+        return query.getResultList();
     }
 
     @Override

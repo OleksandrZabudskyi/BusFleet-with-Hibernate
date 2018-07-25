@@ -33,7 +33,7 @@
                     <td>${trip.confirmation}</td>
                     <td>${trip.bus.licensePlate}</td>
                     <c:choose>
-                        <c:when test="${trip.bus.id  == 0}">
+                        <c:when test="${empty trip.bus}">
                             <td><a class="btn btn-primary btn-sm"
                                    href="${pageContext.request.contextPath}/bus-fleet/admin/all_buses?tripId=${trip.id}&page=${currentPage}"
                                    role="button"><fmt:message key="add"/></a></td>
@@ -51,7 +51,7 @@
                     </c:choose>
                     <td>${trip.driver.drivingLicenceNumber}</td>
                     <c:choose>
-                        <c:when test="${trip.driver.id  == 0}">
+                        <c:when test="${empty trip.driver}">
                             <td><a class="btn btn-primary btn-sm"
                                    href="${pageContext.request.contextPath}/bus-fleet/admin/all_drivers?tripId=${trip.id}&page=${currentPage}"
                                    role="button"><fmt:message key="add"/></a></td>

@@ -27,6 +27,11 @@ public class JDBCDaoFactory extends DaoFactory {
     }
 
     @Override
+    public RouteDao createRouteDao(Session session) {
+        return new RouteDaoImplH(session);
+    }
+
+    @Override
     public TripDao createTripDao(Connection connection) {
         return new TripDaoImpl.TripDaoImplBuilder()
                 .setConnection(connection)
@@ -35,6 +40,11 @@ public class JDBCDaoFactory extends DaoFactory {
                 .setRouteMapper(new RouteMapper())
                 .setTripMapper(new TripMapper())
                 .createTripDaoImpl();
+    }
+
+    @Override
+    public TripDao createTripDao(Session session) {
+        return new TripDaoImplH(session);
     }
 
     @Override
