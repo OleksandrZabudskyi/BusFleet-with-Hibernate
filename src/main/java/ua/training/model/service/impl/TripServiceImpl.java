@@ -3,14 +3,11 @@ package ua.training.model.service.impl;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import ua.training.constant.LogMessages;
 import ua.training.constant.Messages;
 import ua.training.exeptions.EntityAlreadyHandledException;
 import ua.training.exeptions.ServiceException;
-import ua.training.model.dao.BusDao;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.TripDao;
-import ua.training.model.dao.impl.ConnectionPoolHolder;
 import ua.training.model.dao.impl.HibernateConfig;
 import ua.training.model.entity.Bus;
 import ua.training.model.entity.Driver;
@@ -18,11 +15,8 @@ import ua.training.model.entity.Employee;
 import ua.training.model.entity.Trip;
 import ua.training.model.service.TripService;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class TripServiceImpl implements TripService {
     private final static Logger logger = Logger.getLogger(EmployeeServiceImpl.class);
@@ -45,19 +39,16 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public void setBusOnTrip(int tripId, int busId) throws ServiceException {
-        try (Session session = HibernateConfig.getSession();
-             TripDao tripDao = DaoFactory.getInstance().createTripDao(session);
-             BusDao busDao = DaoFactory.getInstance().createBusDao(session)) {
+        try (Session session = HibernateConfig.getSession()) {
             Transaction transaction = session.beginTransaction();
-            Optional<Bus> busOptional = busDao.findById(busId);
-            Optional<Trip> tripOptional = tripDao.findById(tripId);
+            Trip trip = session.get(Trip.class, tripId);
+            Bus bus = session.get(Bus.class, busId);
 
-            if (busOptional.isPresent() && tripOptional.isPresent()
-                    && isBusUpdateAllowed(tripOptional.get(), busOptional.get())) {
-                Trip trip = tripOptional.get();
-                Bus bus = busOptional.get();
+            if (Objects.nonNull(trip) && isBusUpdateAllowed(trip, bus)) {
                 bus.setUsed(true);
                 trip.setBus(bus);
+                session.update(bus);
+                session.update(trip);
             } else {
                 transaction.rollback();
                 throw new EntityAlreadyHandledException(Messages.BUS_ALREADY_USED, busId);
@@ -82,6 +73,8 @@ public class TripServiceImpl implements TripService {
             if (Objects.nonNull(trip) && isDriverUpdateAllowed(trip, driver)) {
                 driver.setAssigned(true);
                 trip.setDriver(driver);
+                session.update(driver);
+                session.update(trip);
             } else {
                 transaction.rollback();
                 throw new EntityAlreadyHandledException(Messages.DRIVER_ALREADY_USED, driverId);
@@ -104,10 +97,12 @@ public class TripServiceImpl implements TripService {
             if (Objects.nonNull(trip)) {
                 int busId = trip.getBus().getId();
                 trip.setBus(null);
+                session.update(trip);
 
                 Bus bus = session.get(Bus.class, busId);
                 if (Objects.nonNull(bus)) {
                     bus.setUsed(false);
+                    session.update(bus);
                 }
             }
             transaction.commit();
@@ -116,18 +111,20 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public void deleteDriverFromTrip(int tripId) {
-        try (Session session = HibernateConfig.getSession()){
+        try (Session session = HibernateConfig.getSession()) {
             Transaction transaction = session.beginTransaction();
             Trip trip = session.get(Trip.class, tripId);
 
-            if(Objects.nonNull(trip)) {
+            if (Objects.nonNull(trip)) {
                 int driverId = trip.getDriver().getId();
                 trip.setDriver(null);
                 trip.setConfirmation(false);
+                session.update(trip);
 
                 Driver driver = (Driver) session.get(Employee.class, driverId);
-                if(Objects.nonNull(driver)) {
+                if (Objects.nonNull(driver)) {
                     driver.setAssigned(false);
+                    session.update(driver);
                 }
             }
             transaction.commit();
@@ -136,31 +133,20 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public List<Trip> getAppointmentTripsToDrivers(Employee employee) {
-        Connection connection = ConnectionPoolHolder.getConnection();
-        try (TripDao tripDao = DaoFactory.getInstance().createTripDao(connection)) {
+        try (Session session = HibernateConfig.getSession();
+             TripDao tripDao = DaoFactory.getInstance().createTripDao(session)) {
             return tripDao.findTripsWithDetailsByDriverId(employee.getId());
         }
     }
 
     @Override
     public void setTripConfirmation(int tripId) {
-        Connection connection = ConnectionPoolHolder.getConnection();
-        try (TripDao tripDao = DaoFactory.getInstance().createTripDao(connection)) {
-            connection.setAutoCommit(false);
-            Optional<Trip> tripOptional = tripDao.findById(tripId);
-            if (tripOptional.isPresent()) {
-                Trip trip = tripOptional.get();
-                trip.setConfirmation(true);
-                tripDao.update(trip);
-            }
-            connection.commit();
-        } catch (SQLException e) {
-            logger.error(LogMessages.TRANSACTION_ERROR, e);
-            try {
-                connection.rollback();
-            } catch (SQLException e1) {
-                logger.error(LogMessages.ROLLBACK_ERROR, e1);
-            }
+        try (Session session = HibernateConfig.getSession()) {
+            Transaction transaction = session.beginTransaction();
+            Trip trip = session.get(Trip.class, tripId);
+            trip.setConfirmation(true);
+            session.update(trip);
+            transaction.commit();
         }
     }
 }

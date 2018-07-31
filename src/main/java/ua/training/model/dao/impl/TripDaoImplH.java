@@ -31,7 +31,9 @@ public class TripDaoImplH implements TripDao {
 
     @Override
     public List<Trip> findTripsWithDetailsByDriverId(int driverId) {
-        return null;
+        Query<Trip> query = session.createQuery("FROM Trip WHERE driver.id = :driverId", Trip.class);
+        query.setParameter("driverId", driverId);
+        return query.getResultList();
     }
 
     @Override
@@ -43,7 +45,8 @@ public class TripDaoImplH implements TripDao {
 
     @Override
     public List<Trip> findAll() {
-        return null;
+        Query<Trip> tripQuery = session.createQuery("FROM Trip", Trip.class);
+        return tripQuery.getResultList();
     }
 
     @Override
