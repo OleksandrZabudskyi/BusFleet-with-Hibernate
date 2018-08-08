@@ -1,14 +1,28 @@
 package ua.training.model.entity;
 
+import javax.persistence.*;
 import java.time.LocalTime;
 
+@Entity
 public class Trip {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tripId")
     private int id;
+    @Column(name = "tripNumber")
     private String number;
+    @Column(name = "tripStartTime")
     private LocalTime startTime;
+    @Column(name = "tripEndTime")
     private LocalTime endTime;
+    @ManyToOne
+    @JoinColumn(name = "routeId")
     private Route route;
+    @ManyToOne
+    @JoinColumn(name = "busId")
     private Bus bus;
+    @ManyToOne
+    @JoinColumn(name = "driverId", referencedColumnName = "userId")
     private Driver driver;
     private boolean confirmation;
 

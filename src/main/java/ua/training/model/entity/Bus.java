@@ -1,16 +1,30 @@
 package ua.training.model.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Bus {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "busId")
     private int id;
+    @Column(name = "busModel")
     private String model;
     private String licensePlate;
     private int manufactureYear;
     private String parkingSpot;
     private boolean used;
-    private List<Driver> drivers = new ArrayList<>();
+    @OneToMany(mappedBy = "bus")
+    private List<Trip> trips;
+    @ManyToMany
+    @JoinTable(
+            name = "bus_has_driver",
+            joinColumns = { @JoinColumn(name = "bus_busId") },
+            inverseJoinColumns = { @JoinColumn(name = "user_userId") }
+    )
+    private List<Driver> drivers;
 
     public int getId() {
         return id;
@@ -66,6 +80,14 @@ public class Bus {
 
     public void setDrivers(List<Driver> drivers) {
         this.drivers = drivers;
+    }
+
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
     }
 
     @Override

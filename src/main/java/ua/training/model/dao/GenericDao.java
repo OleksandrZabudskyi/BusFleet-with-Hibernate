@@ -17,7 +17,7 @@ public interface GenericDao<T, ID> extends AutoCloseable {
 
     List<T> findAll();
 
-    void create(T entity) throws EntityAlreadyExistException;
+    void create(T entity);
 
     void update(T entity);
 

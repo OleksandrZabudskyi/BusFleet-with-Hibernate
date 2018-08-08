@@ -1,7 +1,14 @@
 package ua.training.model.entity;
 
+import javax.persistence.*;
+
+@Entity
 public class Route {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "routeId")
     private int id;
+    @Column(name = "routeName")
     private String name;
     private String destinationFrom;
     private String destinationTo;

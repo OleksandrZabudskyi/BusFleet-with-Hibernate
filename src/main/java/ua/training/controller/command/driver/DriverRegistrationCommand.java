@@ -1,6 +1,7 @@
 package ua.training.controller.command.driver;
 
 import org.apache.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
 import ua.training.constant.Attributes;
 import ua.training.constant.LogMessages;
 import ua.training.constant.Messages;
@@ -12,6 +13,7 @@ import ua.training.model.service.EmployeeService;
 import ua.training.model.service.SecurityService;
 import ua.training.util.LocaleManager;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +60,7 @@ public class DriverRegistrationCommand implements Command {
             driver.setPassword(securityService.makePasswordHash(driver.getPassword()));
             employeeService.registerDriver(driver);
             return Pages.LOGIN_PAGE;
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             logger.error(LogMessages.DRIVER_REGISTRATION_ERROR, e);
             request.setAttribute(Attributes.INFO_MESSAGE, LocaleManager.getProperty(Messages.USER_ALREADY_EXIST));
             return Pages.REGISTRATION_PAGE;

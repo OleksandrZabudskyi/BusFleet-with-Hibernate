@@ -1,14 +1,20 @@
 package ua.training.model.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@DiscriminatorValue(value = "DRIVER")
 public class Driver extends Employee {
     private String drivingLicenceNumber;
     private int drivingExperience;
     private boolean assigned;
     private boolean registered;
-    private List<Bus> buses = new ArrayList<>();
+    @ManyToMany(mappedBy = "drivers")
+    private List<Bus> buses;
+    @OneToMany(mappedBy = "driver")
+    private List<Trip> trip;
 
     public String getDrivingLicenceNumber() {
         return drivingLicenceNumber;
@@ -48,6 +54,14 @@ public class Driver extends Employee {
 
     public void setBuses(List<Bus> buses) {
         this.buses = buses;
+    }
+
+    public List<Trip> getTrip() {
+        return trip;
+    }
+
+    public void setTrip(List<Trip> trip) {
+        this.trip = trip;
     }
 
     @Override
