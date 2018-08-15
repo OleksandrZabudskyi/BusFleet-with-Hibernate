@@ -4,7 +4,7 @@ import ua.training.model.entity.Trip;
 
 import java.util.List;
 
-public interface TripDao extends GenericDao<Trip, Integer> {
+public interface TripDao {
 
     /**
      * Find limited list trips and routes according to ingoing parameters

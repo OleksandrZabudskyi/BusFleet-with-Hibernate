@@ -1,6 +1,5 @@
 package ua.training.model.service.impl;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import ua.training.constant.Messages;
@@ -19,20 +18,24 @@ import java.util.List;
 import java.util.Objects;
 
 public class TripServiceImpl implements TripService {
-    private final static Logger logger = Logger.getLogger(EmployeeServiceImpl.class);
 
     @Override
     public List<Trip> getTripsAndRoutes(int offset, int limit) {
-        try (Session session = HibernateConfig.getSession();
-             TripDao tripDao = DaoFactory.getInstance().createTripDao(session)) {
-            return tripDao.findTripsWithRoutes(offset, limit);
+        try (Session session = HibernateConfig.getSession()) {
+            Transaction transaction = session.beginTransaction();
+            TripDao tripDao = DaoFactory.getInstance().createTripDao();
+            List<Trip> tripsWithRoutes = tripDao.findTripsWithRoutes(offset, limit);
+            transaction.commit();
+            return tripsWithRoutes;
         }
     }
 
     @Override
     public int getNumberOfRecords() {
-        try (Session session = HibernateConfig.getSession();
-             TripDao tripDao = DaoFactory.getInstance().createTripDao(session)) {
+        try (Session session = HibernateConfig.getSession()) {
+            Transaction transaction = session.beginTransaction();
+            TripDao tripDao = DaoFactory.getInstance().createTripDao();
+            transaction.commit();
             return tripDao.getNumberOfRecords();
         }
     }
@@ -133,9 +136,12 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public List<Trip> getAppointmentTripsToDrivers(Employee employee) {
-        try (Session session = HibernateConfig.getSession();
-             TripDao tripDao = DaoFactory.getInstance().createTripDao(session)) {
-            return tripDao.findTripsWithDetailsByDriverId(employee.getId());
+        try (Session session = HibernateConfig.getSession()) {
+            Transaction transaction = session.beginTransaction();
+            TripDao tripDao = DaoFactory.getInstance().createTripDao();
+            List<Trip> tripsWithDetailsByDriverId = tripDao.findTripsWithDetailsByDriverId(employee.getId());
+            transaction.commit();
+            return tripsWithDetailsByDriverId;
         }
     }
 

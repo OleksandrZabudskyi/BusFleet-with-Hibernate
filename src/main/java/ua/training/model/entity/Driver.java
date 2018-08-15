@@ -1,7 +1,9 @@
 package ua.training.model.entity;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.util.List;
 
 @Entity
