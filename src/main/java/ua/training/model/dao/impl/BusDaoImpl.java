@@ -17,11 +17,6 @@ public class BusDaoImpl implements BusDao {
     }
 
     @Override
-    public void addBusesHasDriverRelation(List<Bus> buses, int driverId) {
-
-    }
-
-    @Override
     public List<Bus> findAll() {
         Session session = HibernateConfig.getCurrentSession();
         Query<Bus> query = session.createQuery("FROM Bus", Bus.class);

@@ -14,6 +14,7 @@ import ua.training.model.entity.Driver;
 import ua.training.model.service.EmployeeService;
 import ua.training.model.service.SecurityService;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,7 +87,7 @@ public class DriverRegistrationCommandTest {
         when(request.getParameter(Attributes.EMAIL)).thenReturn("parin@gmail.com");
         when(request.getParameter(Attributes.PASSWORD)).thenReturn("12345");
         when(parametersValidator.hasInvalidDriverData(request)).thenReturn(false);
-        doThrow(new ServiceException(new EntityAlreadyExistException(Messages.USER_ALREADY_EXIST))).
+        doThrow(new PersistenceException(Messages.USER_ALREADY_EXIST)).
                 when(employeeService).registerDriver(any(Driver.class));
         String page = driverRegistrationCommand.execute(request, response);
 
