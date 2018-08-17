@@ -1,9 +1,6 @@
 package ua.training.model.entity;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -13,7 +10,12 @@ public class Driver extends Employee {
     private int drivingExperience;
     private boolean assigned;
     private boolean registered;
-    @ManyToMany(mappedBy = "drivers")
+    @ManyToMany
+    @JoinTable(
+            name = "bus_has_driver",
+            joinColumns = { @JoinColumn(name = "user_userId") },
+            inverseJoinColumns = { @JoinColumn(name = "bus_busId") }
+    )
     private List<Bus> buses;
     @OneToMany(mappedBy = "driver")
     private List<Trip> trip;

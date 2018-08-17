@@ -6,6 +6,7 @@ import ua.training.model.dao.BusDao;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.EmployeeDao;
 import ua.training.model.dao.impl.HibernateConfig;
+import ua.training.model.entity.Bus;
 import ua.training.model.entity.Driver;
 import ua.training.model.entity.Employee;
 import ua.training.model.service.EmployeeService;
@@ -31,12 +32,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void registerDriver(Driver driver) {
         try (Session session = HibernateConfig.getSession()) {
             Transaction transaction = session.beginTransaction();
-            EmployeeDao employeeDao = DaoFactory.getInstance().createUserDao();
             BusDao busDao = DaoFactory.getInstance().createBusDao();
+            List<Bus> buses = busDao.findAll();
+            driver.setBuses(buses);
             driver.setRole(Employee.ROLE.DRIVER);
             session.save(driver);
-            Optional<Employee> savedDriver = employeeDao.findByEmail(driver.getEmail());
-            savedDriver.ifPresent(employee -> busDao.addBusesHasDriverRelation(busDao.findAll(), employee.getId()));
             transaction.commit();
         }
     }
